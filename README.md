@@ -1,73 +1,186 @@
-# React + TypeScript + Vite
+# InfinityCanvas
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 1. Project Overview
 
-Currently, two official plugins are available:
+Infinity Canvas is a **Figma-style infinite canvas editor built** for the web.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The goal of this project is to explore how modern browsers handle **large-scale UI interactions, rendering, and
+performance optimization.**
 
-## React Compiler
+Instead of focusing only on UI features, the project emphasizes:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- efficient rendering strategies
+- interaction handling
+- browser-native APIs
+- React performance optimization
 
-## Expanding the ESLint configuration
+The editor allows users to create and manipulate visual elements on an **infinite canvas**, similar to tools like Figma
+or diagrams.net.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 2. Core Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The editor provides three main categories of functionality:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Canvas Interaction
+2. Element Editing
+3. Editor Interface
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 2.1 Canvas Interaction
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Canvas interaction defines how users navigate and move within the workspace.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Pan
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Users can move across the canvas.
+
+Possible interactions:
+
+- Middle mouse drag
+- Space + drag
+
+### Zoom
+
+Users can zoom in and out of the canvas.
+
+Typical interactions:
+
+- Mouse wheel zoom
+- Zoom control in the UI
+
+### Infinite Canvas
+
+The workspace is not limited to a fixed size.
+Users can navigate freely in any direction.
+
+## 2.2 Element Editing
+
+Users can create and manipulate visual elements on the canvas.
+
+### Element Creation
+
+Supported element types:
+
+- Rectangle
+- Ellipse
+- Text
+- Connector (line between elements)
+
+### Element Selection
+
+Users can select elements in multiple ways:
+
+- Click selection
+- Shift + click for multi-selection
+- Drag selection box
+
+### Element Movement
+
+Selected elements can be moved by dragging.
+
+### Element Resizing
+
+When an element is selected, resize handles appear around it.
+
+Users can drag these handles to resize the element.
+
+### Element Deletion
+
+Selected elements can be deleted using the **Delete key**.
+
+## 2.3 Editor Interface
+
+The editor UI consists of several panels that help users manage the canvas.
+
+### Toolbar
+
+The toolbar provides tools for creating and interacting with elements.
+
+Example tools:
+
+- Select tool
+- Rectangle tool
+- Ellipse tool
+- Text tool
+- Connector tool
+
+### Layers Panel
+
+The Layers panel displays all elements in the current canvas.
+
+Possible features:
+
+- Element list
+- Selection synchronization
+- Visibility toggle
+
+### Inspector Panel
+
+The Inspector panel allows users to edit properties of the selected element.
+
+Example properties:
+
+Position
+
+- X
+- Y
+
+Size
+
+- Width
+- Height
+
+Style
+
+- Fill color
+- Stroke color
+
+### Status Bar
+
+The status bar displays information about the current editor state.
+
+Example information:
+
+- Zoom level
+- Cursor position
+- Number of elements on the canvas
+
+Optional:
+
+- FPS (performance indicator)
+
+### 3. User Workflow
+
+A typical workflow might look like this:
+
+1. The user opens a new canvas.
+2. The user selects the Rectangle tool from the toolbar.
+3. The user clicks on the canvas to create a rectangle.
+4. The user drags the rectangle to change its position.
+5. The user creates additional elements.
+6. The user selects multiple elements using a drag selection box.
+7. The user navigates the canvas using zoom and pan.
+
+## 4. Initial MVP Scope
+
+To keep the project manageable, the first version will include the following features:
+
+Canvas
+
+- Pan
+- Zoom
+
+Elements
+
+- Rectangle creation
+- Selection
+- Move
+- Resize
+- Delete
+
+Editor UI
+
+- Toolbar
+- Layers panel
+- Inspector panel
+
+More advanced features and performance optimizations will be added in later stages.
