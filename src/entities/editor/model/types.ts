@@ -1,4 +1,4 @@
-type CanvasElementType = 'rectangle' | 'ellipse' | 'text' | 'connector'
+export type CanvasElementType = 'rectangle' | 'ellipse' | 'text' | 'connector'
 
 /**
  * Canvas
@@ -23,10 +23,10 @@ type Size = {
 
 type Style = {
     fill: string
-    stroke: string
+    stroke: string | null
 }
 
-type Position = {
+export type Position = {
     x: number
     y: number
 }
