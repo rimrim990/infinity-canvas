@@ -1,33 +1,34 @@
 import {Button} from "@/shared/ui/button.tsx"
 import {Separator} from "@/shared/ui/separator.tsx"
 
-import {
-    MousePointer2,
-    Square,
-    Circle,
-    Type,
-    GitBranch
-} from "lucide-react"
+import {Circle, GitBranch, MousePointer2, Square, Type} from "lucide-react"
+import {useAtom} from "jotai";
+import {toolbarAtom} from "@/entities/editor/model/toolbar.ts";
+import type {ToolbarState} from "@/entities/editor/model/types.ts";
+import type {ReactNode} from "react";
+
+const TOOLBAR_STATE_METAS: Record<ToolbarState, { icon: ReactNode }> = {
+    'select': {icon: <MousePointer2 size={18}/>},
+    'rectangle': {icon: <Square size={18}/>},
+    'ellipse': {icon: <Circle size={18}/>},
+    'text': {icon: <Type size={18}/>},
+    'connector': {icon: <GitBranch size={18}/>}
+}
 
 export default function Toolbar() {
+    const [toolbar, setToolbar] = useAtom(toolbarAtom)
+
     return (
         <div className="h-12 border-b flex items-center px-4 gap-2 bg-muted/40">
-            <Button variant="ghost" size="icon">
-                <MousePointer2 size={18}/>
-            </Button>
-            <Separator orientation="vertical"/>
-            <Button variant="ghost" size="icon">
-                <Square size={18}/>
-            </Button>
-            <Button variant="ghost" size="icon">
-                <Circle size={18}/>
-            </Button>
-            <Button variant="ghost" size="icon">
-                <Type size={18}/>
-            </Button>
-            <Button variant="ghost" size="icon">
-                <GitBranch size={18}/>
-            </Button>
+            {Object.entries(TOOLBAR_STATE_METAS).map(([status, meta], idx) => (
+                <>
+                    <Button id={status} variant="ghost" size="icon" onClick={() => setToolbar(status as ToolbarState)}
+                            active={toolbar === status}>
+                        {meta.icon}
+                    </Button>
+                    {idx === 0 && <Separator orientation="vertical"/>}
+                </>
+            ))}
         </div>
     )
 }

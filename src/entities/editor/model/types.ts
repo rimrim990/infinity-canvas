@@ -1,4 +1,4 @@
 /**
  * Toolbar
  */
-export type ToolbarStatus = 'select' | 'rectangle' | 'ellipse' | 'text' | 'connector'
+export type ToolbarState = 'select' | 'rectangle' | 'ellipse' | 'text' | 'connector'
