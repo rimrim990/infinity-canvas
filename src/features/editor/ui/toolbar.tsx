@@ -22,7 +22,7 @@ export default function Toolbar() {
         <div className="h-12 border-b flex items-center px-4 gap-2 bg-muted/40">
             {Object.entries(TOOLBAR_STATE_METAS).map(([status, meta], idx) => (
                 <>
-                    <Button id={status} variant="ghost" size="icon" onClick={() => setToolbar(status as ToolbarState)}
+                    <Button key={status} id={status} variant="ghost" size="icon" onClick={() => setToolbar(status as ToolbarState)}
                             active={toolbar === status}>
                         {meta.icon}
                     </Button>
