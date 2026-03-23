@@ -1,32 +1,38 @@
-import {useCallback, useRef} from "react";
+import * as React from "react";
+import {useCallback, useEffect, useRef} from "react";
 import {useAtomValue} from "jotai";
 import {toolbarAtom} from "@/entities/editor/model/toolbar.ts";
 import {cn} from "@/shared/lib/utils.ts";
-import * as React from "react";
 import {sceneStorage} from "@/features/editor/api/scene.ts";
+import canvas2DStrategy from "@/features/editor/lib/CanvasStrategy.ts";
 
 export default function CanvasArea() {
     const toolbarState = useAtomValue(toolbarAtom)
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
+    useEffect(() => {
+        const ctx = canvasRef.current?.getContext('2d')
+        if (!ctx) return
+
+        const elements = sceneStorage.getAllElements()
+        for (const element of elements) {
+            canvas2DStrategy.drawElement(element, {ctx})
+        }
+    }, []);
+
     const handleClick: React.MouseEventHandler<HTMLCanvasElement> = useCallback((e) => {
+        if (toolbarState === 'select') return
+
         const canvas = canvasRef.current
         if (!canvas) return
 
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
+
+        const {clientX, clientY} = e
         const rect = canvas.getBoundingClientRect()
-
-        switch (toolbarState) {
-            case "rectangle": {
-                const {clientX, clientY} = e
-                const x = clientX - rect.left
-                const y = clientY - rect.top
-
-                sceneStorage.createElement(toolbarState, {
-                    x, y
-                })
-                break;
-            }
-        }
+        const element = canvas2DStrategy.createElement(toolbarState, {clientX, clientY, canvasBounds: rect})
+        canvas2DStrategy.drawElement(element, {ctx})
     }, [])
 
     return (

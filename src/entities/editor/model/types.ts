@@ -3,7 +3,11 @@ export type CanvasElementType = 'rectangle' | 'ellipse' | 'text' | 'connector'
 /**
  * Canvas
  */
-export interface CanvasElement {
+
+// discriminated union
+export type CanvasElement =  CanvasRectangle | CanvasText
+
+interface BaseElement {
     type: CanvasElementType,
     name: string,
     isVisible: boolean,
@@ -12,8 +16,15 @@ export interface CanvasElement {
     style: Style
 }
 
-export interface CanvasRectangle extends CanvasElement {
+export interface CanvasRectangle extends BaseElement {
     type: 'rectangle'
+}
+
+export interface CanvasText extends BaseElement {
+    type: 'text',
+    text: string
+    fontSize: number
+    lineHeight: number
 }
 
 type Size = {
