@@ -52,6 +52,8 @@ export default function Canvas() {
                 <div
                     className="w-250 h-160 bg-white shadow-lg border rounded-lg flex items-center justify-center text-sm text-muted-foreground">
                     <canvas id='canvas-area' ref={canvasRef}
+                            width={1125}
+                            height={720}
                             className={cn('w-full h-full', {'cursor-crosshair': toolbarState === 'rectangle'})}
                             onClick={handleClick}>
                         Your browser does not support the HTML canvas tag.
