@@ -32,7 +32,9 @@ export default function Canvas() {
         const {clientX, clientY} = e
         const rect = canvas.getBoundingClientRect()
         const element = canvas2DStrategy.createElement(toolbarState, {clientX, clientY, canvasBounds: rect})
+
         canvas2DStrategy.drawElement(element, {ctx})
+        sceneStorage.createElement(element)
     }, [])
 
     return (
