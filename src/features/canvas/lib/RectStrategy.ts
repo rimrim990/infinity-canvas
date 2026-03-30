@@ -1,5 +1,5 @@
-import type {CanvasStrategy} from "@/features/editor/lib/CanvasStrategy.ts";
-import type {CanvasRectangle} from "@/entities/editor/model/types.ts";
+import type {CanvasStrategy} from "@/features/canvas/lib/CanvasStrategy.ts";
+import type { CanvasRectangle } from "../types";
 
 const RectStrategy: CanvasStrategy = {
     drawElement(element: CanvasRectangle, context) {

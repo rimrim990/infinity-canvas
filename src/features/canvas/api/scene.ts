@@ -1,4 +1,4 @@
-import type {CanvasElement} from "@/entities/editor/model/types.ts";
+import type { CanvasElement } from "../types"
 
 type Scene = {
     elements: CanvasElement[]

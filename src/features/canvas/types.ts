@@ -1,9 +1,5 @@
 export type CanvasElementType = 'rectangle' | 'ellipse' | 'text' | 'connector'
 
-/**
- * Canvas
- */
-
 // discriminated union
 export type CanvasElement =  CanvasRectangle | CanvasText
 
@@ -41,8 +37,3 @@ export type Position = {
     x: number
     y: number
 }
-
-/**
- * Toolbar
- */
-export type ToolbarState = 'select' | 'rectangle' | 'ellipse' | 'text' | 'connector'

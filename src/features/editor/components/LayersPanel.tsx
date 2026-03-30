@@ -1,7 +1,7 @@
 import {Eye, EyeOff} from "lucide-react"
 import {useState} from "react"
 
-import {Button} from "@/shared/ui/button"
+import {Button} from "@/shared/ui/button.tsx"
 import {ScrollArea} from "@/shared/ui/scroll-area.tsx"
 
 export default function LayersPanel() {

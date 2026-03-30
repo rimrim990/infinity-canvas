@@ -1,5 +1,5 @@
-import type {CanvasElement, CanvasElementType} from "@/entities/editor/model/types.ts";
-import RectStrategy from "@/features/editor/lib/RectStrategy.ts";
+import RectStrategy from "@/features/canvas/lib/RectStrategy.ts";
+import type {CanvasElement, CanvasElementType} from "@/features/canvas/types.ts";
 
 interface DrawContext {
     ctx: CanvasRenderingContext2D;

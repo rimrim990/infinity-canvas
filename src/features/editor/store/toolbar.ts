@@ -1,4 +1,4 @@
 import {atom} from "jotai";
-import type {ToolbarState} from "@/entities/editor/model/types.ts";
+import type {ToolbarState} from "@/features/editor/types.ts";
 
 export const toolbarAtom = atom<ToolbarState>('select')

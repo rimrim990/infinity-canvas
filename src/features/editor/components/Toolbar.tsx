@@ -3,9 +3,9 @@ import {Separator} from "@/shared/ui/separator.tsx"
 
 import {Circle, GitBranch, MousePointer2, Square, Type} from "lucide-react"
 import {useAtom} from "jotai";
-import {toolbarAtom} from "@/entities/editor/model/toolbar.ts";
-import type {ToolbarState} from "@/entities/editor/model/types.ts";
 import type {ReactNode} from "react";
+import {toolbarAtom} from "@/features/editor/store/toolbar.ts";
+import type {ToolbarState} from "@/features/editor/types.ts";
 
 const TOOLBAR_STATE_METAS: Record<ToolbarState, { icon: ReactNode }> = {
     'select': {icon: <MousePointer2 size={18}/>},

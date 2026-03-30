@@ -1,12 +1,12 @@
 import * as React from "react";
 import {useCallback, useEffect, useRef} from "react";
 import {useAtomValue} from "jotai";
-import {toolbarAtom} from "@/entities/editor/model/toolbar.ts";
 import {cn} from "@/shared/lib/utils.ts";
-import {sceneStorage} from "@/features/editor/api/scene.ts";
-import canvas2DStrategy from "@/features/editor/lib/CanvasStrategy.ts";
+import {sceneStorage} from "@/features/canvas/api/scene.ts";
+import canvas2DStrategy from "@/features/canvas/lib/CanvasStrategy.ts";
+import {toolbarAtom} from "@/features/editor/store/toolbar.ts";
 
-export default function CanvasArea() {
+export default function Canvas() {
     const toolbarState = useAtomValue(toolbarAtom)
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
