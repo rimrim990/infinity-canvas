@@ -45,9 +45,11 @@ const RectStrategy: CanvasStrategy = {
     }
   },
 
-  hitTest(type: 'rectangle', x: number, y: number) {
-    console.log(`hitTest-${type}(${x}, ${y})`)
-    return true
+  hitTest(element: CanvasRectangle, context) {
+    const { position: { x, y }, size: { width, height } } = element
+    const clientX = context.clientX - context.canvasBounds.left
+    const clientY = context.clientY - context.canvasBounds.top
+    return x <= clientX && clientX <= x + width && y <= clientY && clientY <= y + height;
   },
 }
 

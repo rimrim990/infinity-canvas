@@ -5,7 +5,7 @@ interface DrawContext {
   ctx: CanvasRenderingContext2D
 }
 
-interface CreateContext {
+interface CoordContext {
   clientX: number
   clientY: number
   canvasBounds: DOMRect
@@ -14,9 +14,9 @@ interface CreateContext {
 export interface CanvasStrategy {
   drawElement(element: CanvasElement, context: DrawContext): void
 
-  createElement(type: CanvasElementType, context: CreateContext): CanvasElement
+  createElement(type: CanvasElementType, context: CoordContext): CanvasElement
 
-  hitTest(type: CanvasElementType, x: number, y: number): boolean
+  hitTest(element: CanvasElement, context: CoordContext): boolean
 }
 
 const canvas2DStrategy: CanvasStrategy = {
@@ -37,10 +37,10 @@ const canvas2DStrategy: CanvasStrategy = {
       }
     }
   },
-  hitTest(type: CanvasElementType, x: number, y: number) {
-    switch (type) {
+  hitTest(element: CanvasElement, context: CoordContext) {
+    switch (element.type) {
       case 'rectangle': {
-        return RectStrategy.hitTest(type, x, y)
+        return RectStrategy.hitTest(element, context)
       }
       default: {
         return false

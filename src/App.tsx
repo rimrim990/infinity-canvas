@@ -1,6 +1,7 @@
 import Toolbar from '@/features/editor/components/Toolbar.tsx'
 import Canvas from '@/features/canvas/components/Canvas.tsx'
 import StatusBar from '@/features/editor/components/StatusBar.tsx'
+import InspectorPanel from '@/features/editor/components/InspectorPanel.tsx'
 
 export default function App() {
   return (
@@ -16,7 +17,7 @@ export default function App() {
           {/* Canvas */}
           <Canvas />
           {/* Inspector */}
-          {/*<InspectorPanel/>*/}
+          <InspectorPanel/>
         </div>
 
         {/* Status Bar */}

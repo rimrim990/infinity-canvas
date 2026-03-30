@@ -4,7 +4,7 @@ import { Separator } from '@/shared/ui/separator.tsx'
 import { Circle, GitBranch, MousePointer2, Square, Type } from 'lucide-react'
 import { useAtom } from 'jotai'
 import type { ReactNode } from 'react'
-import { toolbarAtom } from '@/features/editor/store/toolbar.ts'
+import { toolbarAtom } from '@/features/editor/store/editor.ts'
 import type { ToolbarState } from '@/features/editor/types.ts'
 
 const TOOLBAR_STATE_METAS: Record<ToolbarState, { icon: ReactNode }> = {

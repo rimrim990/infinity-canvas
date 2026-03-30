@@ -3,6 +3,15 @@ export type CanvasElementType = 'rectangle' | 'ellipse' | 'text' | 'connector'
 // discriminated union
 export type CanvasElement = CanvasRectangle | CanvasText
 
+export interface Scene {
+  elements: Array<CanvasElement & { id: string }>
+  viewport: {
+    x: number
+    y: number
+    zoom: number
+  }
+}
+
 interface BaseElement {
   type: CanvasElementType
   name: string
