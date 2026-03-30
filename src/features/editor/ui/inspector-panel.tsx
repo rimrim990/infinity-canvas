@@ -3,7 +3,7 @@ import { Label } from "@/shared/ui/label.tsx"
 
 export default function InspectorPanel() {
     return (
-        <div className="w-72 border-l bg-muted/20 flex flex-col">
+        <div className="w-55 border-l bg-muted/20 flex flex-col">
             <div className="h-10 flex items-center px-3 text-sm font-medium border-b">
                 Inspector
             </div>

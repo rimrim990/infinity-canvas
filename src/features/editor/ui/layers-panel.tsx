@@ -6,7 +6,7 @@ import {ScrollArea} from "@/shared/ui/scroll-area.tsx"
 
 export default function LayersPanel() {
     return (
-        <div className="w-64 border-r bg-muted/20 flex flex-col">
+        <div className="w-50 border-r bg-muted/20 flex flex-col">
             <div className="h-10 flex items-center px-3 text-sm font-medium border-b">
                 Layers
             </div>

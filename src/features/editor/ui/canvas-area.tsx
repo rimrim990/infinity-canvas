@@ -50,7 +50,7 @@ export default function CanvasArea() {
             {/* canvas */}
             <div className="absolute inset-0 flex items-center justify-center">
                 <div
-                    className="w-[900px] h-[600px] bg-white shadow-lg border rounded-lg flex items-center justify-center text-sm text-muted-foreground">
+                    className="w-250 h-160 bg-white shadow-lg border rounded-lg flex items-center justify-center text-sm text-muted-foreground">
                     <canvas id='canvas-area' ref={canvasRef}
                             className={cn('w-full h-full', {'cursor-crosshair': toolbarState === 'rectangle'})}
                             onClick={handleClick}>
