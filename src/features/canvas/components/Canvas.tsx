@@ -35,7 +35,7 @@ export default function Canvas() {
 
         canvas2DStrategy.drawElement(element, {ctx})
         sceneStorage.createElement(element)
-    }, [])
+    }, [toolbarState])
 
     return (
         <div className="flex-1 relative overflow-hidden bg-neutral-100">
