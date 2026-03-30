@@ -1,7 +1,7 @@
 import Toolbar from "./toolbar"
-import LayersPanel from "./layers-panel"
+// import LayersPanel from "./layers-panel"
 import CanvasArea from "./canvas-area"
-import InspectorPanel from "./inspector-panel"
+// import InspectorPanel from "./inspector-panel"
 import StatusBar from "./status-bar"
 
 export default function EditorLayout() {
@@ -13,11 +13,11 @@ export default function EditorLayout() {
             {/* Main Area */}
             <div className="flex flex-1 overflow-hidden">
                 {/* Layers */}
-                <LayersPanel/>
+                {/*<LayersPanel/>*/}
                 {/* Canvas */}
                 <CanvasArea/>
                 {/* Inspector */}
-                <InspectorPanel/>
+                {/*<InspectorPanel/>*/}
             </div>
 
             {/* Status Bar */}
