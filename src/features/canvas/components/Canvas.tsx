@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { cn } from '@/shared/lib/utils.ts'
 import canvas2DStrategy from '@/features/canvas/lib/CanvasStrategy.ts'
 import { toolbarAtom } from '@/features/editor/store/editor.ts'
@@ -11,7 +11,7 @@ export default function Canvas() {
 
   const [elements, pushElements] = useAtom(elementsAtom)
   const updateSelectedId = useSetAtom(selectedElementAtom)
-  const toolbarState = useAtomValue(toolbarAtom)
+  const [toolbarState, setToolbarState] = useAtom(toolbarAtom)
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d')
@@ -55,6 +55,8 @@ export default function Canvas() {
 
           canvas2DStrategy.drawElement(element, { ctx })
           pushElements(element)
+
+          setToolbarState('select')
           break
         }
       }
