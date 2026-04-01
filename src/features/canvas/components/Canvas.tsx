@@ -4,7 +4,7 @@ import { useAtom } from 'jotai'
 import { cn } from '@/shared/lib/utils.ts'
 import canvas2DStrategy from '@/features/canvas/lib/CanvasStrategy.ts'
 import { toolbarAtom } from '@/features/editor/store/editor.ts'
-import { elementsAtom, selectedElementAtom } from '@/features/canvas/store/scene.ts'
+import { elementsAtom, hoveredElementAtom, selectedElementAtom } from '@/features/canvas/store/scene.ts'
 
 
 export default function Canvas() {
@@ -12,6 +12,7 @@ export default function Canvas() {
 
   const [elements, pushElements] = useAtom(elementsAtom)
   const [selectedElement, updateSelectedId] = useAtom(selectedElementAtom)
+  const [hoveredElement, updatedHoveredId] = useAtom(hoveredElementAtom)
   const [toolbarState, setToolbarState] = useAtom(toolbarAtom)
 
   useEffect(() => {
@@ -22,9 +23,12 @@ export default function Canvas() {
     ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height)
 
     for (const element of elements) {
-      canvas2DStrategy.drawElement(element, { focused: !!selectedElement?.id && selectedElement?.id === element.id }, { ctx })
+      canvas2DStrategy.drawElement(element, {
+        focused: !!selectedElement?.id && selectedElement?.id === element.id,
+        hovered: !!hoveredElement?.id && hoveredElement.id === element.id,
+      }, { ctx })
     }
-  }, [elements, selectedElement])
+  }, [elements, selectedElement, hoveredElement])
 
   const handleClick: React.MouseEventHandler<HTMLCanvasElement> = useCallback(
     (e) => {
@@ -69,6 +73,30 @@ export default function Canvas() {
     [toolbarState, elements, updateSelectedId],
   )
 
+  const handleMouseMove: React.MouseEventHandler<HTMLCanvasElement> = useCallback(
+    (e) => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      const { clientX, clientY } = e
+      const rect = canvas.getBoundingClientRect()
+
+      if (toolbarState !== 'select') return
+      const hit = elements.find(element => canvas2DStrategy.hitTest(element, {
+        clientX,
+        clientY,
+        canvasBounds: rect,
+      }))
+
+      if (hit) updatedHoveredId(hit.id)
+      else updatedHoveredId(null)
+    },
+    [elements],
+  )
+
   return (
     <div className="flex-1 relative overflow-hidden bg-neutral-100">
       {/* grid background */}
@@ -92,6 +120,7 @@ export default function Canvas() {
             height={720}
             className={cn('w-full h-full', { 'cursor-crosshair': toolbarState === 'rectangle' })}
             onClick={handleClick}
+            onMouseMove={handleMouseMove}
           >
             Your browser does not support the HTML canvas tag.
           </canvas>

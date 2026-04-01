@@ -12,7 +12,7 @@ const LABEL_FONT_SIZE = 11
 const LABEL_RADIUS = 4
 
 const RectStrategy: CanvasStrategy = {
-  drawElement(element: CanvasRectangle, { focused }, context) {
+  drawElement(element: CanvasRectangle, { focused, hovered }, context) {
     const { ctx } = context
     const { size, position, style } = element
 
@@ -83,6 +83,24 @@ const RectStrategy: CanvasStrategy = {
       ctx.fillText(label, boxX + boxWidth / 2, boxY + boxHeight / 2)
 
       ctx.restore()
+      return
+    }
+
+    if (hovered) {
+      const offset = STROKE_WIDTH / 2
+
+      ctx.save()
+      ctx.strokeStyle = SELECTION_COLOR
+      ctx.lineWidth = STROKE_WIDTH
+      ctx.strokeRect(
+        position.x - offset,
+        position.y - offset,
+        size.width + STROKE_WIDTH,
+        size.height + STROKE_WIDTH
+      )
+
+      ctx.restore()
+      return
     }
   },
 

@@ -30,4 +30,14 @@ export const selectedElementAtom = atom((get) => {
   set(selectedIdAtom, selectedId)
 })
 
+const hoveredIdAtom = atom<string | null>(null)
+
+export const hoveredElementAtom = atom((get) => {
+  const hoveredId = get(hoveredIdAtom)
+  const elements = get(elementsAtom)
+  return elements.find((element) => element.id === hoveredId)
+}, (_get, set, hoveredId: string | null) => {
+  set(hoveredIdAtom, hoveredId)
+})
+
 
