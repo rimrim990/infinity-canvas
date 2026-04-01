@@ -11,10 +11,12 @@ export const elementsAtom = atom(
   (get) => get(sceneAtom).elements,
   (get, set, element: CanvasElement) => {
     const scene = get(sceneAtom)
+    const id = crypto.randomUUID()
     set(sceneAtom, {
       ...scene,
-      elements: [...scene.elements, { ...element, id: crypto.randomUUID() }],
+      elements: [...scene.elements, { ...element, id }],
     })
+    return id
   },
 )
 

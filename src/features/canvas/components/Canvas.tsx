@@ -54,9 +54,10 @@ export default function Canvas() {
           })
 
           canvas2DStrategy.drawElement(element, { ctx })
-          pushElements(element)
+          const id = pushElements(element)
 
           setToolbarState('select')
+          updateSelectedId(id)
           break
         }
       }
