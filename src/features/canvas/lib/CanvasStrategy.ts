@@ -12,7 +12,7 @@ interface CoordContext {
 }
 
 export interface CanvasStrategy {
-  drawElement(element: CanvasElement, context: DrawContext): void
+  drawElement(element: CanvasElement, options: { focused?: boolean }, context: DrawContext): void
 
   createElement(type: CanvasElementType, context: CoordContext): CanvasElement
 
@@ -20,10 +20,10 @@ export interface CanvasStrategy {
 }
 
 const canvas2DStrategy: CanvasStrategy = {
-  drawElement(element, context) {
+  drawElement(element, options, context) {
     switch (element.type) {
       case 'rectangle':
-        RectStrategy.drawElement(element, context)
+        RectStrategy.drawElement(element, options, context)
     }
   },
   createElement(type, context) {

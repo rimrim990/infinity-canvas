@@ -1,26 +1,30 @@
 import * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom } from 'jotai'
 import { cn } from '@/shared/lib/utils.ts'
 import canvas2DStrategy from '@/features/canvas/lib/CanvasStrategy.ts'
 import { toolbarAtom } from '@/features/editor/store/editor.ts'
 import { elementsAtom, selectedElementAtom } from '@/features/canvas/store/scene.ts'
 
+
 export default function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const [elements, pushElements] = useAtom(elementsAtom)
-  const updateSelectedId = useSetAtom(selectedElementAtom)
+  const [selectedElement, updateSelectedId] = useAtom(selectedElementAtom)
   const [toolbarState, setToolbarState] = useAtom(toolbarAtom)
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d')
     if (!ctx) return
 
+    // 캔버스 전체 초기화 후 다시 그리기
+    ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height)
+
     for (const element of elements) {
-      canvas2DStrategy.drawElement(element, { ctx })
+      canvas2DStrategy.drawElement(element, { focused: !!selectedElement?.id && selectedElement?.id === element.id }, { ctx })
     }
-  }, [elements])
+  }, [elements, selectedElement])
 
   const handleClick: React.MouseEventHandler<HTMLCanvasElement> = useCallback(
     (e) => {
@@ -39,7 +43,7 @@ export default function Canvas() {
           }))
 
           if (hit) updateSelectedId(hit.id)
-          console.log(hit)
+          else updateSelectedId(null)
           break
         }
 
@@ -53,7 +57,7 @@ export default function Canvas() {
             canvasBounds: rect,
           })
 
-          canvas2DStrategy.drawElement(element, { ctx })
+          canvas2DStrategy.drawElement(element, {}, { ctx })
           const id = pushElements(element)
 
           setToolbarState('select')
