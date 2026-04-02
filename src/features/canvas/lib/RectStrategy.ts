@@ -12,7 +12,7 @@ const LABEL_FONT_SIZE = 11
 const LABEL_RADIUS = 4
 
 const RectStrategy: CanvasStrategy = {
-  drawElement(element: CanvasRectangle, { focused, hovered }, context) {
+  drawElement(element: CanvasRectangle, { focused, pointer, hovered }, context) {
     const { ctx } = context
     const { size, position, style } = element
 
@@ -27,7 +27,7 @@ const RectStrategy: CanvasStrategy = {
     }
 
     // highlight focused rectangle
-    if (focused) {
+    if (focused || pointer) {
       const offset = STROKE_WIDTH / 2
 
       ctx.save()
