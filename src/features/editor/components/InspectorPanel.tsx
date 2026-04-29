@@ -1,10 +1,11 @@
 import { Input } from '@/shared/ui/input.tsx'
 import { Label } from '@/shared/ui/label.tsx'
 import { useAtomValue } from 'jotai'
-import { selectedElementAtom } from '@/features/canvas/store/scene.ts'
+import { pointerElementContextAtom } from '@/features/canvas/store/scene.ts'
 
 export default function InspectorPanel() {
-  const selectedElement = useAtomValue(selectedElementAtom)
+  const pointerElementContext = useAtomValue(pointerElementContextAtom)
+  const pointerElement = pointerElementContext?.pointerElement
 
   return (
     <div className="w-55 border-l bg-muted/20 flex flex-col">
@@ -13,23 +14,23 @@ export default function InspectorPanel() {
         <div className="space-y-2">
           <Label>Position</Label>
           <div className="grid grid-cols-2 gap-2">
-            <Input placeholder="X" defaultValue={selectedElement?.position.x} />
-            <Input placeholder="Y" defaultValue={selectedElement?.position.y} />
+            <Input placeholder="X" defaultValue={pointerElement?.position.x} />
+            <Input placeholder="Y" defaultValue={pointerElement?.position.y} />
           </div>
         </div>
 
         <div className="space-y-2">
           <Label>Size</Label>
           <div className="grid grid-cols-2 gap-2">
-            <Input placeholder="Width" defaultValue={selectedElement?.size.width} />
-            <Input placeholder="Height" defaultValue={selectedElement?.size.height} />
+            <Input placeholder="Width" defaultValue={pointerElement?.size.width} />
+            <Input placeholder="Height" defaultValue={pointerElement?.size.height} />
           </div>
         </div>
 
         <div className="space-y-2">
           <Label>Style</Label>
-          <Input placeholder="Fill color" defaultValue={selectedElement?.style.fill} />
-          <Input placeholder="Stroke color" defaultValue={selectedElement?.style.stroke || undefined} />
+          <Input placeholder="Fill color" defaultValue={pointerElement?.style.fill} />
+          <Input placeholder="Stroke color" defaultValue={pointerElement?.style.stroke || undefined} />
         </div>
       </div>
     </div>

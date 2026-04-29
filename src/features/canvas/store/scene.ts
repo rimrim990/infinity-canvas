@@ -38,17 +38,8 @@ export const updateElementPositionAtom = atom(
   },
 )
 
-const selectedIdAtom = atom<string | null>(null)
-
-export const selectedElementAtom = atom((get) => {
-  const selectedId = get(selectedIdAtom)
-  const elements = get(elementsAtom)
-  return elements.find((element) => element.id === selectedId)
-}, (_get, set, selectedId: string | null) => {
-  set(selectedIdAtom, selectedId)
-})
-
 type PointerContext = {
+  status: 'pointerDown'| 'pointerUp'
   pointerId: string
   pointerXOffset: number
   pointerYOffset: number
@@ -60,15 +51,25 @@ export const pointerElementContextAtom = atom((get) => {
   const context = get(pointerContextAtom)
   if (!context) return null
   const elements = get(elementsAtom)
-  const pointerElement =  elements.find((element) => element.id === context.pointerId)
+  const pointerElement = elements.find((element) => element.id === context.pointerId)
   if (!pointerElement) return null
   return {
     pointerElement,
+    status: context.status,
     pointerXOffset: context.pointerXOffset,
     pointerYOffset: context.pointerYOffset,
   }
 }, (_get, set, selectContext: PointerContext | null) => {
   set(pointerContextAtom, selectContext)
+})
+
+export const updatePointerStatusAtom = atom((get) => {
+  const context = get(pointerContextAtom)
+  return context?.status
+}, (get, set, status: PointerContext['status']) => {
+  const prev = get(pointerContextAtom)
+  if (!prev) return
+  set(pointerContextAtom, { ...prev, status })
 })
 
 const hoveredIdAtom = atom<string | null>(null)

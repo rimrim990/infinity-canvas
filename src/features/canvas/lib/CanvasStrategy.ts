@@ -13,7 +13,6 @@ interface CoordContext {
 
 export interface CanvasStrategy {
   drawElement(element: CanvasElement, options: {
-    focused?: boolean,
     hovered?: boolean,
     pointer?: boolean
   }, context: DrawContext): void
