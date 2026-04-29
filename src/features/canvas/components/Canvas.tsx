@@ -7,7 +7,7 @@ import { toolbarAtom } from '@/features/editor/store/editor.ts'
 import {
   elementsAtom,
   hoveredElementAtom,
-  pointerElementAtom,
+  pointerElementContextAtom,
   selectedElementAtom, updateElementPositionAtom,
 } from '@/features/canvas/store/scene.ts'
 
@@ -19,7 +19,7 @@ export default function Canvas() {
   const updateElementPosition = useSetAtom(updateElementPositionAtom)
 
   const [selectedElement, updateSelectedId] = useAtom(selectedElementAtom)
-  const [pointerElement, updatePointerId] = useAtom(pointerElementAtom)
+  const [pointerElementContext, updatePointerContext] = useAtom(pointerElementContextAtom)
   const [hoveredElement, updatedHoveredId] = useAtom(hoveredElementAtom)
 
   const [toolbarState, setToolbarState] = useAtom(toolbarAtom)
@@ -35,10 +35,10 @@ export default function Canvas() {
       canvas2DStrategy.drawElement(element, {
         focused: !!selectedElement?.id && selectedElement.id === element.id,
         hovered: !!hoveredElement?.id && hoveredElement.id === element.id,
-        pointer: !!pointerElement?.id && pointerElement.id === element.id,
+        pointer: !!pointerElementContext?.pointerElement && pointerElementContext.pointerElement.id === element.id,
       }, { ctx })
     }
-  }, [elements, selectedElement, pointerElement, hoveredElement])
+  }, [elements, selectedElement, pointerElementContext, hoveredElement])
 
   const handleClick: React.MouseEventHandler<HTMLCanvasElement> = useCallback((e) => {
     const canvas = canvasRef.current
@@ -75,7 +75,6 @@ export default function Canvas() {
 
         setToolbarState('select')
         updateSelectedId(id)
-        updatePointerId(id)
         break
       }
     }
@@ -97,12 +96,20 @@ export default function Canvas() {
             canvasBounds: rect,
           }))
 
-          if (hit) updatePointerId(hit.id)
+          if (hit) {
+            const calculatedX = clientX - rect.left
+            const calculatedY = clientY - rect.top
+            updatePointerContext({
+              pointerId: hit.id,
+              pointerXOffset: calculatedX - hit.position.x,
+              pointerYOffset: calculatedY - hit.position.y,
+            })
+          }
           break
         }
       }
     },
-    [toolbarState, elements, updatePointerId],
+    [toolbarState, elements, updatePointerContext],
   )
 
   const handlePointerMove: React.PointerEventHandler<HTMLCanvasElement> = useCallback(
@@ -125,11 +132,12 @@ export default function Canvas() {
       }))
 
       // 선택된 요소 드래그로 이동
-      if (hit && pointerElement && hit.id === pointerElement.id) {
+      if (hit && pointerElementContext?.pointerElement && hit.id === pointerElementContext.pointerElement.id) {
+        const { pointerXOffset, pointerYOffset } = pointerElementContext
         updateElementPosition({
           id: hit.id, position: {
-            x: clientX - rect.left,
-            y: clientY - rect.top,
+            x: clientX - rect.left + pointerXOffset,
+            y: clientY - rect.top + pointerYOffset,
           },
         })
         return
@@ -139,11 +147,11 @@ export default function Canvas() {
       if (hit) updatedHoveredId(hit.id)
       else updatedHoveredId(null)
     },
-    [toolbarState, elements, pointerElement])
+    [toolbarState, elements, pointerElementContext])
 
   const handlePointerUp: React.PointerEventHandler<HTMLCanvasElement> = useCallback(() => {
     // 드래그 종료
-    updatePointerId(null)
+    updatePointerContext(null)
   }, [])
 
   return (

@@ -48,14 +48,27 @@ export const selectedElementAtom = atom((get) => {
   set(selectedIdAtom, selectedId)
 })
 
-const pointerIdAtom = atom<string | null>(null)
+type PointerContext = {
+  pointerId: string
+  pointerXOffset: number
+  pointerYOffset: number
+}
 
-export const pointerElementAtom = atom((get) => {
-  const pointerId = get(pointerIdAtom)
+const pointerContextAtom = atom<PointerContext | null>(null)
+
+export const pointerElementContextAtom = atom((get) => {
+  const context = get(pointerContextAtom)
+  if (!context) return null
   const elements = get(elementsAtom)
-  return elements.find((element) => element.id === pointerId)
-}, (_get, set, selectedId: string | null) => {
-  set(pointerIdAtom, selectedId)
+  const pointerElement =  elements.find((element) => element.id === context.pointerId)
+  if (!pointerElement) return null
+  return {
+    pointerElement,
+    pointerXOffset: context.pointerXOffset,
+    pointerYOffset: context.pointerYOffset,
+  }
+}, (_get, set, selectContext: PointerContext | null) => {
+  set(pointerContextAtom, selectContext)
 })
 
 const hoveredIdAtom = atom<string | null>(null)
