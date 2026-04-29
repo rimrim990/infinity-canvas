@@ -135,8 +135,8 @@ export default function Canvas() {
         updateElementPosition({
           id: pointerElement.id,
           position: {
-            x: calculatedX + pointerXOffset,
-            y: calculatedY + pointerYOffset,
+            x: calculatedX - pointerXOffset,
+            y: calculatedY - pointerYOffset,
           },
         })
       }
