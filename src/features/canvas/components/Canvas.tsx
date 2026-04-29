@@ -1,26 +1,25 @@
 import * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { cn } from '@/shared/lib/utils.ts'
 import canvas2DStrategy from '@/features/canvas/lib/CanvasStrategy.ts'
 import { toolbarAtom } from '@/features/editor/store/editor.ts'
-import {
-  elementsAtom,
-  hoveredElementAtom,
-  pointerElementContextAtom,
-  updateElementPositionAtom, updatePointerStatusAtom,
-} from '@/features/canvas/store/scene.ts'
-
+import { elementsAtom, setElementPositionAtom } from '@/features/canvas/store/scene.ts'
+import { pointerContextAtom, pointerPositionAtom } from '@/features/canvas/store/pointer.ts'
+import { hoveredElementAtom, isDraggingAtom, setPointerContextStatusAtom } from '@/features/canvas/store/selectors.ts'
 
 export default function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const [elements, pushElements] = useAtom(elementsAtom)
-  const updateElementPosition = useSetAtom(updateElementPositionAtom)
+  const setElementPosition = useSetAtom(setElementPositionAtom)
 
-  const [pointerElementContext, updatePointerContext] = useAtom(pointerElementContextAtom)
-  const updatePointerStatusUpdate = useSetAtom(updatePointerStatusAtom)
-  const [hoveredElement, updatedHoveredId] = useAtom(hoveredElementAtom)
+  const setPointerPosition = useSetAtom(pointerPositionAtom)
+  const hoveredElement = useAtomValue(hoveredElementAtom)
+
+  const [pointerContext, setPointerContext] = useAtom(pointerContextAtom)
+  const isDragging = useAtomValue(isDraggingAtom)
+  const setPointerStatusUpdate = useSetAtom(setPointerContextStatusAtom)
 
   const [toolbarState, setToolbarState] = useAtom(toolbarAtom)
 
@@ -34,10 +33,10 @@ export default function Canvas() {
     for (const element of elements) {
       canvas2DStrategy.drawElement(element, {
         hovered: !!hoveredElement?.id && hoveredElement.id === element.id,
-        pointer: !!pointerElementContext?.pointerElement && pointerElementContext.pointerElement.id === element.id,
+        pointer: !!pointerContext && pointerContext.pointerId === element.id,
       }, { ctx })
     }
-  }, [elements, pointerElementContext, hoveredElement])
+  }, [elements, pointerContext, hoveredElement])
 
   const handleClick: React.MouseEventHandler<HTMLCanvasElement> = useCallback((e) => {
     const canvas = canvasRef.current
@@ -62,7 +61,7 @@ export default function Canvas() {
         const id = pushElements(element)
 
         setToolbarState('select')
-        updatePointerContext({ pointerId: id, status: 'pointerUp' ,pointerYOffset: 0, pointerXOffset: 0 })
+        setPointerContext({ pointerId: id, status: 'pointerUp' ,pointerYOffset: 0, pointerXOffset: 0 })
         break
       }
     }
@@ -86,20 +85,20 @@ export default function Canvas() {
           }))
 
           if (hit) {
-            updatePointerContext({
+            setPointerContext({
               pointerId: hit.id,
               status: 'pointerDown',
               pointerXOffset: x - hit.position.x,
               pointerYOffset: y - hit.position.y,
             })
           } else {
-            updatePointerContext(null)
+            setPointerContext(null)
           }
           break
         }
       }
     },
-    [toolbarState, elements, updatePointerContext],
+    [toolbarState, elements, setPointerContext],
   )
 
   const handlePointerMove: React.PointerEventHandler<HTMLCanvasElement> = useCallback(
@@ -118,12 +117,11 @@ export default function Canvas() {
       if (toolbarState !== 'select') return
 
       // 선택된 요소 드래그로 이동
-      const pointerElement = pointerElementContext?.pointerElement
-      if (pointerElement && ['pointerDown'].includes(pointerElementContext.status)) {
-        const { pointerXOffset, pointerYOffset } = pointerElementContext
+      if (isDragging) {
+        const { pointerId, pointerXOffset, pointerYOffset } = pointerContext!
 
-        updateElementPosition({
-          id: pointerElement.id,
+        setElementPosition({
+          id: pointerId,
           position: {
             x: x - pointerXOffset,
             y: y - pointerYOffset,
@@ -131,19 +129,17 @@ export default function Canvas() {
         })
       }
 
-      // 마우스 이동하면서 hover된 요소 하이라이팅
-      const hit = elements.find(element => canvas2DStrategy.hitTest(element, {
-        x,
-        y,
-      }))
-      if (hit) updatedHoveredId(hit.id)
-      else updatedHoveredId(null)
+      if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
+        setPointerPosition({ x, y })
+      } else {
+        setPointerPosition(null)
+      }
     },
-    [toolbarState, elements, pointerElementContext])
+    [toolbarState, elements, pointerContext])
 
   const handlePointerUp: React.PointerEventHandler<HTMLCanvasElement> = useCallback(() => {
     // 드래그 종료
-    updatePointerStatusUpdate('pointerUp')
+    setPointerStatusUpdate('pointerUp')
   }, [])
 
   return (
