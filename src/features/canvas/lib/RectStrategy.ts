@@ -105,13 +105,7 @@ const RectStrategy: CanvasStrategy = {
   },
 
   createElement(type: 'rectangle', context): CanvasRectangle {
-    const {
-      clientX,
-      clientY,
-      canvasBounds: { left, top },
-    } = context
-    const x = clientX - left
-    const y = clientY - top
+    const { x, y } = context
 
     return {
       type,
@@ -132,11 +126,9 @@ const RectStrategy: CanvasStrategy = {
     }
   },
 
-  hitTest(element: CanvasRectangle, context) {
-    const { position: { x, y }, size: { width, height } } = element
-    const clientX = context.clientX - context.canvasBounds.left
-    const clientY = context.clientY - context.canvasBounds.top
-    return x <= clientX && clientX <= x + width && y <= clientY && clientY <= y + height;
+  hitTest(element: CanvasRectangle, { x, y }) {
+    const { position, size: { width, height } } = element
+    return position.x <= x && x <= position.x + width && position.y <= y && y <= position.y + height;
   },
 }
 

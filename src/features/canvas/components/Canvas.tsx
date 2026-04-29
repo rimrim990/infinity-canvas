@@ -45,6 +45,8 @@ export default function Canvas() {
 
     const { clientX, clientY } = e
     const rect = canvas.getBoundingClientRect()
+    const x = clientX - rect.left
+    const y = clientY - rect.top
 
     switch (toolbarState) {
       case 'rectangle': {
@@ -52,9 +54,8 @@ export default function Canvas() {
         if (!ctx) return
 
         const element = canvas2DStrategy.createElement(toolbarState, {
-          clientX,
-          clientY,
-          canvasBounds: rect,
+          x,
+          y,
         })
 
         canvas2DStrategy.drawElement(element, {}, { ctx })
@@ -74,23 +75,22 @@ export default function Canvas() {
 
       const { clientX, clientY } = e
       const rect = canvas.getBoundingClientRect()
+      const x = clientX - rect.left
+      const y = clientY - rect.top
 
       switch (toolbarState) {
         case 'select': {
           const hit = elements.find(element => canvas2DStrategy.hitTest(element, {
-            clientX,
-            clientY,
-            canvasBounds: rect,
+            x,
+            y,
           }))
 
           if (hit) {
-            const calculatedX = clientX - rect.left
-            const calculatedY = clientY - rect.top
             updatePointerContext({
               pointerId: hit.id,
               status: 'pointerDown',
-              pointerXOffset: calculatedX - hit.position.x,
-              pointerYOffset: calculatedY - hit.position.y,
+              pointerXOffset: x - hit.position.x,
+              pointerYOffset: y - hit.position.y,
             })
           } else {
             updatePointerContext(null)
@@ -112,6 +112,8 @@ export default function Canvas() {
 
       const { clientX, clientY } = e
       const rect = canvas.getBoundingClientRect()
+      const x = clientX - rect.left
+      const y = clientY - rect.top
 
       if (toolbarState !== 'select') return
 
@@ -119,23 +121,20 @@ export default function Canvas() {
       const pointerElement = pointerElementContext?.pointerElement
       if (pointerElement && ['pointerDown'].includes(pointerElementContext.status)) {
         const { pointerXOffset, pointerYOffset } = pointerElementContext
-        const calculatedX = clientX - rect.left
-        const calculatedY = clientY - rect.top
 
         updateElementPosition({
           id: pointerElement.id,
           position: {
-            x: calculatedX - pointerXOffset,
-            y: calculatedY - pointerYOffset,
+            x: x - pointerXOffset,
+            y: y - pointerYOffset,
           },
         })
       }
 
       // 마우스 이동하면서 hover된 요소 하이라이팅
       const hit = elements.find(element => canvas2DStrategy.hitTest(element, {
-        clientX,
-        clientY,
-        canvasBounds: rect,
+        x,
+        y,
       }))
       if (hit) updatedHoveredId(hit.id)
       else updatedHoveredId(null)

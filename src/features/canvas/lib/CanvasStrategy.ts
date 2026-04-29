@@ -6,9 +6,8 @@ interface DrawContext {
 }
 
 interface CoordContext {
-  clientX: number
-  clientY: number
-  canvasBounds: DOMRect
+  x: number
+  y: number
 }
 
 export interface CanvasStrategy {
