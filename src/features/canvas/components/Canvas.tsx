@@ -125,25 +125,28 @@ export default function Canvas() {
 
       if (toolbarState !== 'select') return
 
+      // 선택된 요소 드래그로 이동
+      const pointerElement = pointerElementContext?.pointerElement
+      if (pointerElement) {
+        const { pointerXOffset, pointerYOffset } = pointerElementContext
+        const calculatedX = clientX - rect.left
+        const calculatedY = clientY - rect.top
+
+        updateElementPosition({
+          id: pointerElement.id,
+          position: {
+            x: calculatedX + pointerXOffset,
+            y: calculatedY + pointerYOffset,
+          },
+        })
+      }
+
+      // 마우스 이동하면서 hover된 요소 하이라이팅
       const hit = elements.find(element => canvas2DStrategy.hitTest(element, {
         clientX,
         clientY,
         canvasBounds: rect,
       }))
-
-      // 선택된 요소 드래그로 이동
-      if (hit && pointerElementContext?.pointerElement && hit.id === pointerElementContext.pointerElement.id) {
-        const { pointerXOffset, pointerYOffset } = pointerElementContext
-        updateElementPosition({
-          id: hit.id, position: {
-            x: clientX - rect.left + pointerXOffset,
-            y: clientY - rect.top + pointerYOffset,
-          },
-        })
-        return
-      }
-
-      // hover 하이라이팅
       if (hit) updatedHoveredId(hit.id)
       else updatedHoveredId(null)
     },
