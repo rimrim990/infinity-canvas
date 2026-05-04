@@ -8,7 +8,6 @@ import {
   beginPointerInteractionAtom,
   endPointerInteractionAtom,
   movePointerInteractionAtom,
-  pointerContextAtom,
   pointerPositionAtom,
 } from '@/features/canvas/store/pointer.ts'
 import { isDraggingAtom } from '@/features/canvas/store/selectors.ts'
@@ -24,7 +23,6 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
 
   const setPointerPosition = useSetAtom(pointerPositionAtom)
 
-  const [pointerContext, setPointerContext] = useAtom(pointerContextAtom)
   const isDragging = useAtomValue(isDraggingAtom)
 
   const [toolbarState, setToolbarState] = useAtom(toolbarAtom)
@@ -47,14 +45,13 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
         })
 
         canvas2DStrategy.drawElement(element, {}, { ctx })
-        const id = createElement(element)
+        createElement(element)
 
         setToolbarState('select')
-        setPointerContext({ pointerId: id, status: 'pointerUp' ,pointerYOffset: 0, pointerXOffset: 0 })
         break
       }
     }
-  }, [toolbarState, elements])
+  }, [toolbarState, createElement, setToolbarState])
 
   const handlePointerDown: React.PointerEventHandler<HTMLCanvasElement> = useCallback(
     (e) => {
@@ -70,21 +67,20 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
             x,
             y,
           }))
-          beginPointerInteraction(hit ? { x: hit.position.x, y: hit.position.y, id: hit.id } : undefined)
+          beginPointerInteraction(
+            hit ? { pointer: { x, y }, element: hit } : undefined,
+          )
           break
         }
       }
     },
-    [toolbarState, setPointerContext],
+    [toolbarState, elements, beginPointerInteraction],
   )
 
   const handlePointerMove: React.PointerEventHandler<HTMLCanvasElement> = useCallback(
     (e) => {
       const canvas = canvasRef.current
       if (!canvas) return
-
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
 
       const { clientX, clientY } = e
       const { x, y } = toCanvasCoords(clientX, clientY, canvas)
@@ -102,7 +98,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
         setPointerPosition(null)
       }
     },
-    [toolbarState, elements, pointerContext])
+    [toolbarState, isDragging, movePointerInteraction, setPointerPosition])
 
   const handlePointerUp: React.PointerEventHandler<HTMLCanvasElement> = useCallback(() => {
     endPointerInteraction()

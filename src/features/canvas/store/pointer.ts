@@ -1,6 +1,7 @@
 import { atom } from 'jotai'
 import { setElementPositionAtom } from '@/features/canvas/store/scene.ts'
 import { setPointerContextStatusAtom } from '@/features/canvas/store/selectors.ts'
+import type { CanvasElement } from '@/features/canvas/types.ts'
 
 type PointerPosition = {
   x: number
@@ -18,15 +19,23 @@ export type PointerContext = {
 
 export const pointerContextAtom = atom<PointerContext | null>(null)
 
-export const beginPointerInteractionAtom = atom(null, (_get, set, position?: PointerPosition & { id: string }) => {
-  if (!position) set(pointerContextAtom, null)
-  else set(pointerContextAtom, {
-    status: 'pointerDown',
-    pointerId: position.id,
-    pointerXOffset: position.x,
-    pointerYOffset: position.y,
-  })
-})
+export const beginPointerInteractionAtom = atom(
+  null,
+  (_get, set, payload?: { pointer: PointerPosition; element: CanvasElement & { id: string } }) => {
+    if (!payload) {
+      set(pointerContextAtom, null)
+      return
+    }
+
+    const { pointer, element } = payload
+    set(pointerContextAtom, {
+      status: 'pointerDown',
+      pointerId: element.id,
+      pointerXOffset: pointer.x - element.position.x,
+      pointerYOffset: pointer.y - element.position.y,
+    })
+  },
+)
 
 export const movePointerInteractionAtom = atom(null, (get, set, position: PointerPosition) => {
   const context = get(pointerContextAtom)
