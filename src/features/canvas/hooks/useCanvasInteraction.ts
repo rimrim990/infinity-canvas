@@ -3,19 +3,27 @@ import { useCallback } from 'react'
 import canvas2DStrategy from '@/features/canvas/lib/CanvasStrategy.ts'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { toolbarAtom } from '@/features/editor/store/editor.ts'
-import { elementsAtom, setElementPositionAtom } from '@/features/canvas/store/scene.ts'
-import { pointerContextAtom, pointerPositionAtom } from '@/features/canvas/store/pointer.ts'
-import { isDraggingAtom, setPointerContextStatusAtom } from '@/features/canvas/store/selectors.ts'
+import { elementsAtom } from '@/features/canvas/store/scene.ts'
+import {
+  beginPointerInteractionAtom,
+  endPointerInteractionAtom,
+  movePointerInteractionAtom,
+  pointerContextAtom,
+  pointerPositionAtom,
+} from '@/features/canvas/store/pointer.ts'
+import { isDraggingAtom } from '@/features/canvas/store/selectors.ts'
 
 export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
   const [elements, pushElements] = useAtom(elementsAtom)
-  const setElementPosition = useSetAtom(setElementPositionAtom)
+
+  const beginPointerInteraction = useSetAtom(beginPointerInteractionAtom)
+  const movePointerInteraction = useSetAtom(movePointerInteractionAtom)
+  const endPointerInteraction = useSetAtom(endPointerInteractionAtom)
 
   const setPointerPosition = useSetAtom(pointerPositionAtom)
 
   const [pointerContext, setPointerContext] = useAtom(pointerContextAtom)
   const isDragging = useAtomValue(isDraggingAtom)
-  const setPointerStatusUpdate = useSetAtom(setPointerContextStatusAtom)
 
   const [toolbarState, setToolbarState] = useAtom(toolbarAtom)
 
@@ -64,17 +72,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
             x,
             y,
           }))
-
-          if (hit) {
-            setPointerContext({
-              pointerId: hit.id,
-              status: 'pointerDown',
-              pointerXOffset: x - hit.position.x,
-              pointerYOffset: y - hit.position.y,
-            })
-          } else {
-            setPointerContext(null)
-          }
+          beginPointerInteraction(hit ? { x: hit?.position.x, y: hit?.position.y, id: hit?.id } : undefined)
           break
         }
       }
@@ -99,15 +97,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
 
       // 선택된 요소 드래그로 이동
       if (isDragging) {
-        const { pointerId, pointerXOffset, pointerYOffset } = pointerContext!
-
-        setElementPosition({
-          id: pointerId,
-          position: {
-            x: x - pointerXOffset,
-            y: y - pointerYOffset,
-          },
-        })
+        movePointerInteraction({ x, y })
       }
 
       if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
@@ -119,8 +109,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
     [toolbarState, elements, pointerContext])
 
   const handlePointerUp: React.PointerEventHandler<HTMLCanvasElement> = useCallback(() => {
-    // 드래그 종료
-    setPointerStatusUpdate('pointerUp')
+    endPointerInteraction()
   }, [])
 
   return {
