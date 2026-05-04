@@ -13,17 +13,17 @@ export const sceneAtom = atomWithStorage<Scene>('scene', {
 })
 
 export const elementsAtom = atom(
-  (get) => get(sceneAtom).elements,
-  (get, set, element: CanvasElement) => {
-    const scene = get(sceneAtom)
-    const id = crypto.randomUUID()
-    set(sceneAtom, {
-      ...scene,
-      elements: [...scene.elements, { ...element, id }],
-    })
-    return id
-  },
+  (get) => get(sceneAtom).elements
 )
+
+export const createElementAtom = atom(null, (_get, set, element: CanvasElement) => {
+  const id = crypto.randomUUID()
+  set(sceneAtom, (prev) => ({
+    ...prev,
+    elements: [...prev.elements, { ...element, id }],
+  }))
+  return id
+})
 
 export const setElementPositionAtom = atom(
   null, // 읽기 불필요

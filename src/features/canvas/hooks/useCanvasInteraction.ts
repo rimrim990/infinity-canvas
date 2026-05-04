@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import canvas2DStrategy from '@/features/canvas/lib/CanvasStrategy.ts'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { toolbarAtom } from '@/features/editor/store/editor.ts'
-import { elementsAtom } from '@/features/canvas/store/scene.ts'
+import { createElementAtom, elementsAtom } from '@/features/canvas/store/scene.ts'
 import {
   beginPointerInteractionAtom,
   endPointerInteractionAtom,
@@ -15,7 +15,8 @@ import { isDraggingAtom } from '@/features/canvas/store/selectors.ts'
 import { isInsideCanvas, toCanvasCoords } from '@/features/canvas/utils.ts'
 
 export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
-  const [elements, pushElements] = useAtom(elementsAtom)
+  const elements = useAtomValue(elementsAtom)
+  const createElement = useSetAtom(createElementAtom)
 
   const beginPointerInteraction = useSetAtom(beginPointerInteractionAtom)
   const movePointerInteraction = useSetAtom(movePointerInteractionAtom)
@@ -46,7 +47,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
         })
 
         canvas2DStrategy.drawElement(element, {}, { ctx })
-        const id = pushElements(element)
+        const id = createElement(element)
 
         setToolbarState('select')
         setPointerContext({ pointerId: id, status: 'pointerUp' ,pointerYOffset: 0, pointerXOffset: 0 })
@@ -74,7 +75,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
         }
       }
     },
-    [toolbarState, elements, setPointerContext],
+    [toolbarState, setPointerContext],
   )
 
   const handlePointerMove: React.PointerEventHandler<HTMLCanvasElement> = useCallback(
