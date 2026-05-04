@@ -12,6 +12,7 @@ import {
   pointerPositionAtom,
 } from '@/features/canvas/store/pointer.ts'
 import { isDraggingAtom } from '@/features/canvas/store/selectors.ts'
+import { isInsideCanvas, toCanvasCoords } from '@/features/canvas/utils.ts'
 
 export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
   const [elements, pushElements] = useAtom(elementsAtom)
@@ -32,9 +33,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
     if (!canvas) return
 
     const { clientX, clientY } = e
-    const rect = canvas.getBoundingClientRect()
-    const x = clientX - rect.left
-    const y = clientY - rect.top
+    const { x, y } = toCanvasCoords(clientX, clientY, canvas)
 
     switch (toolbarState) {
       case 'rectangle': {
@@ -62,9 +61,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
       if (!canvas) return
 
       const { clientX, clientY } = e
-      const rect = canvas.getBoundingClientRect()
-      const x = clientX - rect.left
-      const y = clientY - rect.top
+      const { x, y } = toCanvasCoords(clientX, clientY, canvas)
 
       switch (toolbarState) {
         case 'select': {
@@ -72,7 +69,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
             x,
             y,
           }))
-          beginPointerInteraction(hit ? { x: hit?.position.x, y: hit?.position.y, id: hit?.id } : undefined)
+          beginPointerInteraction(hit ? { x: hit.position.x, y: hit.position.y, id: hit.id } : undefined)
           break
         }
       }
@@ -89,9 +86,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
       if (!ctx) return
 
       const { clientX, clientY } = e
-      const rect = canvas.getBoundingClientRect()
-      const x = clientX - rect.left
-      const y = clientY - rect.top
+      const { x, y } = toCanvasCoords(clientX, clientY, canvas)
 
       if (toolbarState !== 'select') return
 
@@ -100,7 +95,7 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
         movePointerInteraction({ x, y })
       }
 
-      if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
+      if (isInsideCanvas(x, y, canvas)) {
         setPointerPosition({ x, y })
       } else {
         setPointerPosition(null)
