@@ -13,7 +13,7 @@ import {
 import { isDraggingAtom } from '@/features/canvas/store/selectors.ts'
 import { isInsideCanvas, toCanvasCoords } from '@/features/canvas/utils.ts'
 
-export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
+export default function useCanvasInteraction(canvas: HTMLCanvasElement | null) {
   const elements = useAtomValue(elementsAtom)
   const createElement = useSetAtom(createElementAtom)
 
@@ -28,7 +28,6 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
   const [toolbarState, setToolbarState] = useAtom(toolbarAtom)
 
   const handleClick: React.MouseEventHandler<HTMLCanvasElement> = useCallback((e) => {
-    const canvas = canvasRef.current
     if (!canvas) return
 
     const { clientX, clientY } = e
@@ -55,7 +54,6 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
 
   const handlePointerDown: React.PointerEventHandler<HTMLCanvasElement> = useCallback(
     (e) => {
-      const canvas = canvasRef.current
       if (!canvas) return
 
       const { clientX, clientY } = e
@@ -79,23 +77,21 @@ export default function useCanvasInteraction(canvasRef: React.RefObject<HTMLCanv
 
   const handlePointerMove: React.PointerEventHandler<HTMLCanvasElement> = useCallback(
     (e) => {
-      const canvas = canvasRef.current
       if (!canvas) return
 
       const { clientX, clientY } = e
       const { x, y } = toCanvasCoords(clientX, clientY, canvas)
 
-      if (toolbarState !== 'select') return
+      switch (toolbarState) {
+        case 'select': {
+          // 선택된 요소 드래그로 이동
+          if (isDragging) {
+            movePointerInteraction({ x, y })
+          }
 
-      // 선택된 요소 드래그로 이동
-      if (isDragging) {
-        movePointerInteraction({ x, y })
-      }
-
-      if (isInsideCanvas(x, y, canvas)) {
-        setPointerPosition({ x, y })
-      } else {
-        setPointerPosition(null)
+          setPointerPosition(isInsideCanvas(x, y, canvas) ? { x, y } : null)
+          break
+        }
       }
     },
     [toolbarState, isDragging, movePointerInteraction, setPointerPosition])

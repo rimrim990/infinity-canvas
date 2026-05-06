@@ -10,7 +10,7 @@ import useCanvasInteraction from '@/features/canvas/hooks/useCanvasInteraction.t
 
 export default function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const { handleClick, handlePointerUp, handlePointerDown, handlePointerMove } = useCanvasInteraction(canvasRef)
+  const { handleClick, handlePointerUp, handlePointerDown, handlePointerMove } = useCanvasInteraction(canvasRef?.current)
 
   const elements = useAtomValue(elementsAtom)
   const hoveredElement = useAtomValue(hoveredElementAtom)
