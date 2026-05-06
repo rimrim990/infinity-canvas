@@ -10,6 +10,13 @@ interface CoordContext {
   y: number
 }
 
+// registry
+const strategies = {
+  rectangle: RectStrategy,
+} as const
+
+const getStrategy = (type: CanvasElementType) => strategies[type as keyof typeof strategies]
+
 export interface CanvasStrategy {
   drawElement(element: CanvasElement, options: {
     hovered?: boolean,
@@ -23,31 +30,16 @@ export interface CanvasStrategy {
 
 const canvas2DStrategy: CanvasStrategy = {
   drawElement(element, options, context) {
-    switch (element.type) {
-      case 'rectangle':
-        RectStrategy.drawElement(element, options, context)
-    }
+    const strategy = getStrategy(element.type)
+    strategy?.drawElement(element, options, context)
   },
   createElement(type, context) {
-    switch (type) {
-      case 'rectangle': {
-        return RectStrategy.createElement(type, context)
-      }
-      // tmp
-      default: {
-        return {} as CanvasElement
-      }
-    }
+    const strategy = getStrategy(type)
+    return strategy?.createElement(type, context)
   },
   hitTest(element: CanvasElement, context: CoordContext) {
-    switch (element.type) {
-      case 'rectangle': {
-        return RectStrategy.hitTest(element, context)
-      }
-      default: {
-        return false
-      }
-    }
+    const strategy = getStrategy(element.type)
+    return strategy?.hitTest(element, context) ?? false
   },
 }
 
